@@ -1,0 +1,6 @@
+- Can a deterministic hook check that a diff only touches the files named in `plan.md`? How should legitimate deviations be approved?
+- What is the practical ceiling of parallel sessions one engineer can oversee, and does it depend on the type of task?
+- Which current NLP integrations can be replaced by a deterministic flow or algorithm, and what does that save in compute cost?
+- How reliably do skills trigger across different phrasings of the same task, and how should trigger reliability be measured?
+- For legacy systems, what is the best way to record lineage while moving to markdown as the source of truth?
+- When is a setup mature enough for auto mode, and which measurable signals show it?
