@@ -1,0 +1,5 @@
+- How should policy skills be versioned, so that a spec records which version of each policy it was checked against?
+- What happens when two required skills conflict, for example UX against security? Should a priority order be encoded?
+- Can traceability from intent to spec be checked automatically, so that every requirement points back to the problem it solves?
+- Which flagged concerns are raised most often, and could a deterministic rule replace them?
+- How much of the policy owner's review time is saved when the policy is encoded as a skill instead of a document?

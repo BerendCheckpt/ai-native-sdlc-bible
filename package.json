@@ -1,0 +1,22 @@
+{
+  "name": "ai-native-sdlc-bible",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Website and wiki for the AI-native SDLC bible: stages, roles of agents and engineers, security and efficient use of agents.",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "seed": "node --env-file-if-exists=.env scripts/seed.js",
+    "test": "node --test \"tests/unit/**/*.test.js\" \"tests/hooks/**/*.test.js\" \"tests/scripts/**/*.test.js\"",
+    "test:e2e": "playwright test",
+    "check": "node scripts/check-frameworks.js && node scripts/check-artifacts.js && node scripts/check-deps.js",
+    "wiki": "node scripts/build-wiki.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
+  }
+}

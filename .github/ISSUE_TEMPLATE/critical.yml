@@ -1,0 +1,35 @@
+name: Critical issue
+description: Framework divergence, new node modules, or anything else that needs the engineer's attention.
+title: "Critical: "
+labels: ["critical"]
+assignees: ["BerendCheckpt"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - Diverges from the chosen frameworks (Node.js, HTML/CSS/JS with W3.CSS and W3.JS, SQLite)
+        - New node modules compared with main
+        - New feature
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters
+    validations:
+      required: true
+  - type: textarea
+    id: next
+    attributes:
+      label: Proposed next step
+    validations:
+      required: true

@@ -1,0 +1,164 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled, ready_for_review]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  ENGINEER: BerendCheckpt
+
+jobs:
+  unit:
+    name: unit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install
+        run: if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+      - name: Artifacts follow their required skills
+        run: node scripts/check-artifacts.js
+      - name: Unit, hook and script tests
+        run: npm test
+      - name: Seed the database
+        run: npm run seed
+      - name: Build the wiki
+        run: npm run wiki
+
+  e2e:
+    name: e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install
+        run: if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Browser tests (desktop and 375px)
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  frameworks:
+    name: frameworks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check the chosen stack (Node.js, W3.CSS, W3.JS, SQLite)
+        id: check
+        run: node scripts/check-frameworks.js 2>&1 | tee frameworks-report.txt; exit "${PIPESTATUS[0]}"
+      - name: Raise a critical issue for framework divergence
+        if: failure() && steps.check.conclusion == 'failure' && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          title="Critical: PR #${PR} diverges from the chosen frameworks"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --label critical --search "\"$title\" in:title" --json number --jq '.[0].number')
+          if [ -z "$existing" ]; then
+            {
+              echo "@${ENGINEER} PR #${PR} diverges from the chosen frameworks (Node.js, HTML/CSS/JavaScript with W3.CSS and W3.JS, SQLite)."
+              echo
+              echo '```'
+              cat frameworks-report.txt
+              echo '```'
+            } > issue.md
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --label critical --assignee "$ENGINEER" --body-file issue.md
+          fi
+
+  deps:
+    name: deps
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Compare node modules with main
+        id: diff
+        env:
+          BASE_REF: origin/${{ github.base_ref }}
+          DEPS_APPROVED: ${{ contains(github.event.pull_request.labels.*.name, 'deps-approved') }}
+        run: |
+          set +e
+          node scripts/check-deps.js --report deps-report.md
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+      - name: Raise a critical issue and tag the engineer
+        if: hashFiles('deps-report.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          title="Critical: PR #${PR} adds or changes node modules"
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state open --label critical --search "\"$title\" in:title" --json number --jq '.[0].number')
+          if [ -z "$existing" ]; then
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --label critical --assignee "$ENGINEER" --body-file deps-report.md
+          fi
+          gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --edit-last --body-file deps-report.md || gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file deps-report.md
+      - name: Wait for a human to approve the node modules
+        if: steps.diff.outputs.status != '0'
+        run: |
+          echo "::error::New or changed node modules. @${ENGINEER} must review them and add the 'deps-approved' label."
+          exit 1
+
+  pr-policy:
+    name: pr-policy
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Justification and governance files
+        id: policy
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          CHANGED_FILES="$(git diff --name-only "$BASE_SHA"...HEAD)"
+          export CHANGED_FILES
+          node scripts/check-pr.js
+      - name: Label governance changes
+        if: always() && steps.policy.outputs.governance == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh pr edit "$PR" --repo "$GITHUB_REPOSITORY" --add-label governance

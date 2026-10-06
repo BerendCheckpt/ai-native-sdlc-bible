@@ -1,0 +1,5 @@
+- Which baseline methods, such as rolling mean and σ, median absolute deviation or seasonal decomposition, work best for typical CI and production metrics?
+- How should seasonality, such as release days or weekends, be handled without making the detection script non-deterministic?
+- How can the noise of a band be measured, and what dismissal rate should trigger retuning?
+- Under which conditions may Claude trigger a pre-approved runbook without a human in the loop?
+- How should a Claude on-call integrate with ticket systems and chat channels without creating duplicate incidents?

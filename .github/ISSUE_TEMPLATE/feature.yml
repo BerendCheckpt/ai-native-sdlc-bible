@@ -1,0 +1,37 @@
+name: New feature (critical)
+description: Propose a new feature. New features are critical issues and need approval from the engineer before work starts.
+title: "Feature: "
+labels: ["feature", "critical", "needs-approval"]
+assignees: ["BerendCheckpt"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        New features are **critical issues**. @BerendCheckpt reviews this issue and adds the `approved` label before a feature branch may be created.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What should be possible that isn't possible today?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters
+      description: Who is affected and what "better" means.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Out of scope
+    validations:
+      required: false
+  - type: textarea
+    id: next
+    attributes:
+      label: Proposed next step
+      description: Usually "write intent.md with the write-intent skill".
+    validations:
+      required: true

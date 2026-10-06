@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{title}} · AI-Native SDLC Bible</title>
+<meta name="description" content="{{description}}">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+<link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="w3-bar site-bar">
+<a href="/" class="w3-bar-item w3-button site-brand">AI-Native SDLC Bible</a>
+{{{navLinks}}}
+<form action="/search" method="get" class="w3-bar-item w3-right w3-hide-small site-search" role="search">
+<input class="w3-input w3-border w3-round" type="search" name="q" placeholder="Search" aria-label="Search the bible">
+</form>
+<button type="button" id="nav-toggle" class="w3-bar-item w3-button w3-right w3-hide-medium w3-hide-large" aria-controls="mobile-nav" aria-expanded="false" aria-label="Open menu">&#9776;</button>
+</header>
+<nav id="mobile-nav" class="w3-bar-block w3-hide-medium w3-hide-large site-bar" aria-label="Main">
+{{{mobileNavLinks}}}
+<form action="/search" method="get" class="w3-bar-item" role="search">
+<input class="w3-input w3-border w3-round" type="search" name="q" placeholder="Search" aria-label="Search the bible">
+</form>
+</nav>
+<main id="main" class="w3-content site-main">
+{{{body}}}
+</main>
+<footer class="w3-container site-footer">
+<p>Best practices are maintained by human engineers in <code>content/</code> and mirrored to the repository wiki.</p>
+</footer>
+<script src="https://www.w3schools.com/lib/w3.js"></script>
+<script src="/js/site.js"></script>
+</body>
+</html>

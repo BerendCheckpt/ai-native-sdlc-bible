@@ -1,0 +1,25 @@
+name: Bug
+description: Something on the site, in the wiki or in the tooling doesn't work as expected.
+title: "Bug: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: next
+    attributes:
+      label: Proposed next step
+      description: For a fix, the failing test is written first (write-tests skill).
+    validations:
+      required: false

@@ -1,0 +1,40 @@
+# Secrets and credentials: never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+secrets/
+credentials*.json
+
+# Local Claude Code settings (personal permissions, tokens)
+.claude/settings.local.json
+.claude/*.local.*
+
+# Generated database (rebuilt by `npm run seed` from content/)
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Generated wiki output (published by the wiki-sync workflow)
+build/
+
+# Dependencies and tooling output
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+coverage/
+npm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

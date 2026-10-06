@@ -1,0 +1,31 @@
+<nav class="w3-bar stage-pager" aria-label="Stages">
+<a class="w3-bar-item w3-button w3-round" href="/stages/{{prevSlug}}" rel="prev"><span aria-hidden="true">←</span> {{prevLabel}}</a>
+<a class="w3-bar-item w3-button w3-round w3-right" href="/stages/{{nextSlug}}" rel="next">{{nextLabel}} <span aria-hidden="true">→</span></a>
+</nav>
+
+<header class="stage-header">
+<p class="stage-kicker">Stage {{position}} of {{total}}</p>
+<h1 id="page-title">{{title}}</h1>
+<p class="w3-large">{{{summaryHtml}}}</p>
+<p>Commits <span class="w3-tag w3-round artifact-tag">{{{artifactHtml}}}</span></p>
+<nav class="w3-bar on-this-page" aria-label="On this page">
+<a class="w3-bar-item w3-button" href="#details">Details</a>
+<a class="w3-bar-item w3-button" href="#recommendations">Recommendations</a>
+<a class="w3-bar-item w3-button" href="#research">Future research</a>
+</nav>
+</header>
+
+<section id="details" class="w3-panel w3-leftbar stage-panel panel-details" aria-labelledby="details-heading">
+<h2 id="details-heading">Details</h2>
+{{{details}}}
+</section>
+
+<section id="recommendations" class="w3-panel w3-leftbar stage-panel panel-recommendations" aria-labelledby="recommendations-heading">
+<h2 id="recommendations-heading">Recommendations</h2>
+{{{recommendations}}}
+</section>
+
+<section id="research" class="w3-panel w3-leftbar stage-panel panel-research" aria-labelledby="research-heading">
+<h2 id="research-heading">Future research questions</h2>
+{{{research}}}
+</section>

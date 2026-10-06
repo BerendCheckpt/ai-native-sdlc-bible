@@ -1,0 +1,11 @@
+<h1 id="page-title">Search</h1>
+<form action="/search" method="get" role="search" class="search-form">
+<label for="search-q" class="w3-text-grey">Search all stages and pages</label>
+<input id="search-q" class="w3-input w3-border w3-round" type="search" name="q" value="{{query}}" autofocus>
+</form>
+<p id="search-summary">{{summary}}</p>
+<label for="search-filter" class="w3-text-grey">Filter these results</label>
+<input id="search-filter" class="w3-input w3-border w3-round" type="text" autocomplete="off">
+<ul id="results" class="w3-ul search-results">
+{{{results}}}
+</ul>

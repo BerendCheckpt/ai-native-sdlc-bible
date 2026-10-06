@@ -1,0 +1,47 @@
+<section class="home-hero" aria-labelledby="page-title">
+<h1 id="page-title">The AI-Native SDLC Bible</h1>
+<p class="w3-large lead">Agents do the work, humans steer. Six stages, each ending in a committed artifact that triggers the next.</p>
+</section>
+
+<section id="stages" class="home-section" aria-labelledby="stages-heading">
+<h2 id="stages-heading">The six stages</h2>
+<ol class="stage-loop">
+{{{stageCards}}}
+</ol>
+<p class="loop-note"><span aria-hidden="true">↺</span> After Maintain the loop starts again: a breached control writes the next <code>intent.md</code>.</p>
+</section>
+
+<section id="dynamics" class="home-section" aria-labelledby="dynamics-heading">
+<h2 id="dynamics-heading">How Claude and the human engineer work together</h2>
+<p>The same pattern repeats at every stage. Select a step to read what happens in it.</p>
+<p class="dyn-legend">
+<span class="legend-item"><span class="legend-swatch legend-human" aria-hidden="true"></span>Human engineer</span>
+<span class="legend-item"><span class="legend-swatch legend-agent" aria-hidden="true"></span>Claude</span>
+</p>
+<div class="dyn-figure w3-hide-small">
+{{{dynamicsWide}}}
+</div>
+<div class="dyn-figure w3-hide-medium w3-hide-large">
+{{{dynamicsTall}}}
+</div>
+<div id="dynamics-detail" class="w3-panel w3-leftbar dyn-detail" aria-live="polite">
+<p>Select a step in the loop to see its responsibilities.</p>
+</div>
+
+<div class="w3-bar actor-tabs" role="group" aria-label="Show responsibilities">
+<button type="button" class="w3-bar-item w3-button actor-tab actor-tab-human" data-target="human-list" aria-pressed="true">Humans steer</button>
+<button type="button" class="w3-bar-item w3-button actor-tab actor-tab-agent" data-target="agent-list" aria-pressed="false">Agents do the work</button>
+</div>
+<div id="human-list" class="w3-panel w3-leftbar actor-list actor-list-human">
+<h3>Humans steer</h3>
+{{{humansList}}}
+</div>
+<div id="agent-list" class="w3-panel w3-leftbar actor-list actor-list-agent">
+<h3>Agents do the work</h3>
+{{{agentsList}}}
+</div>
+</section>
+
+<section id="intro" class="home-section intro" aria-label="Introduction">
+{{{introHtml}}}
+</section>

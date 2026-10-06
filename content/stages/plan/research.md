@@ -1,0 +1,5 @@
+- Which parts of synthesizing pain points, such as clustering support tickets or log messages, can deterministic tooling do before a model is involved?
+- What is the minimum intent structure that lets Stage 2 run without any follow-up questions?
+- How can the quality of an intent be scored before it reaches design, and does that score predict how many `spec.md` revisions follow?
+- How should intents written by agents in Stage 6 be prioritized against intents from humans?
+- Which analyst questions does Claude ask most often, and can they become a fixed checklist in the skill?

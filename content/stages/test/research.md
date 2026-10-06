@@ -1,0 +1,5 @@
+- How should an eval suite of 20–50 tasks be selected so that it stays representative as the codebase changes?
+- How can an eval stay independent of the model and the prompt while still catching regressions in either?
+- What does one run of the eval suite cost, and what is the best schedule, balancing cost against detection speed?
+- Which kinds of visual verification, such as screenshot diffs or accessibility trees, give the most reliable signal for UI changes?
+- How can tests that were weakened to make a check pass be detected automatically?

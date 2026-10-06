@@ -1,0 +1,6 @@
+- Should deployment tooling be exposed through managed MCP with permissions or through a gateway? What are the trade-offs for audit and least privilege?
+- What exactly counts as approval: a review, a label, or a signed commit? How can it be proven that a human gave it?
+- How should agent autonomy be tiered per environment (development, test, acceptance, production), and which signals justify moving up a tier?
+- How can rollback rehearsals be automated so that they happen often without manual effort?
+- How should review severity be calibrated so that humans spend their time on the findings that matter?
+- Third-party CDN assets such as W3.CSS cannot always be pinned with subresource integrity. Should they be vendored to keep releases reproducible?

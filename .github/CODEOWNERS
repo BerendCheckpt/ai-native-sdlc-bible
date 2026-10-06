@@ -1,0 +1,17 @@
+# Every change needs a review from a human engineer before it merges to main.
+* @BerendCheckpt
+
+# Governance: CLAUDE.md, review policy, skills, subagents, hooks, CI and policy.
+/CLAUDE.md @BerendCheckpt
+**/CLAUDE.md @BerendCheckpt
+/REVIEW.md @BerendCheckpt
+/.claude/ @BerendCheckpt
+/.github/ @BerendCheckpt
+/scripts/lib/policy.js @BerendCheckpt
+
+# Best-practice content is maintained by human engineers.
+/content/ @BerendCheckpt
+
+# Node modules: any change is a critical issue.
+/package.json @BerendCheckpt
+/package-lock.json @BerendCheckpt
