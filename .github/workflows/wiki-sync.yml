@@ -10,6 +10,9 @@ on:
       - 'content/**'
       - 'scripts/build-wiki.js'
       - 'src/content.js'
+      # Changing the publisher itself must also publish, or a fix to this
+      # workflow never reaches the wiki until content/ happens to change.
+      - '.github/workflows/wiki-sync.yml'
   workflow_dispatch:
 
 permissions:
