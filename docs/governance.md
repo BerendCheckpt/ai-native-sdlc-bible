@@ -16,6 +16,7 @@ Every rule has a deterministic control where possible. Claude Code hooks only bi
 | Governance files go through a reviewed PR | `protect-paths.js` returns **ask** on every edit to `CLAUDE.md`, `REVIEW.md`, `.claude/**` and `.github/**` | CODEOWNERS, plus a `governance` label set by `pr-policy` |
 | Best practices are maintained by humans | `protect-paths.js` denies edits to `content/**` | CODEOWNERS on `content/` |
 | Sensitive information stays out of git | `protect-paths.js` and permission rules deny access to `.env`, keys and databases. `no-secrets.js` scans the staged diff on commit | `.gitignore` |
+| Commits never break CI | `guard-git.js` denies `git commit` when `.gitignore` excludes files in `content/`, `src/`, `db/` or `.github/`, or when the unit, hook and script tests fail | `unit` check, `tests/unit/content-tracked.test.js` |
 | Skills are required | `require-skill.js` denies `work/*/{intent,spec,plan}.md` that miss the headings their skill declares | `check-artifacts.js` in the `unit` check |
 | Only humans set approval labels | `guard-gh.js` denies adding `approved` or `deps-approved` | |
 
