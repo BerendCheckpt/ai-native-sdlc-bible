@@ -33,7 +33,15 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git clone "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki
+          # The Wiki tab's pages are stored in <repo>.wiki.git. GitHub only
+          # creates it after the first page is saved by hand, and there is no
+          # API for that, so stop with an explanation instead of a clone error.
+          WIKI_URL="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+          if ! git ls-remote "$WIKI_URL" > /dev/null 2>&1; then
+            echo "::error title=GitHub Wiki not initialized::The Wiki tab of ${GITHUB_REPOSITORY} has no pages yet, so GitHub has not created its storage. A repository admin must open https://github.com/${GITHUB_REPOSITORY}/wiki, click 'Create the first page' and save it (any content; this workflow overwrites it). Then re-run this workflow. See docs/setup.md, step 3."
+            exit 1
+          fi
+          git clone "$WIKI_URL" wiki
           find wiki -maxdepth 1 -name '*.md' -delete
           cp build/wiki/*.md wiki/
           cd wiki
