@@ -82,3 +82,33 @@ test('evaluates every command in a chain', () => {
   assert.equal(decision('npm test && git push origin main'), 'deny');
   assert.equal(decision('git -C . push origin main'), 'deny');
 });
+
+test('denies commits when .gitignore excludes source files', () => {
+  const result = evaluate('git commit -m x', fakeContext({ ignored: ['content/stages/build/stage.md'] }));
+  assert.equal(result.decision, 'deny');
+  assert.match(result.reason, /content\/stages\/build\/stage\.md/);
+  assert.match(result.reason, /\/build\//);
+});
+
+test('denies commits when the tests fail, and shows the failures', () => {
+  const result = evaluate('git commit -m x', fakeContext({ tests: { ok: false, output: '✖ markdown renders tables' } }));
+  assert.equal(result.decision, 'deny');
+  assert.match(result.reason, /markdown renders tables/);
+});
+
+test('checks ignored files and tests before asking about test changes', () => {
+  const ctx = fakeContext({ staged: ['tests/unit/x.test.js'], tests: { ok: false, output: '✖ x' } });
+  assert.equal(evaluate('git commit -m x', ctx).decision, 'deny');
+});
+
+test('the real repository has no ignored source files', () => {
+  const { defaultContext } = require('../../.claude/hooks/guard-git');
+  assert.deepEqual(defaultContext(require('node:path').join(__dirname, '..', '..')).ignoredSourceFiles(), []);
+});
+
+test('the hook runs the same tests as npm test', () => {
+  const policy = require('../../scripts/lib/policy');
+  const pkg = require('../../package.json');
+  const globs = [...pkg.scripts.test.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(policy.TEST_GLOBS, globs);
+});
