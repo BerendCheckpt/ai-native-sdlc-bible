@@ -14,9 +14,12 @@
 param(
   [string]$Repo = 'BerendCheckpt/ai-native-sdlc-bible',
   [string]$Branch = 'main',
-  # With EnforceAdmins, admins also need an approving review. Your own PRs
-  # then need a second engineer; Claude's PRs (bot account) need you.
-  [bool]$EnforceAdmins = $true
+  # This repository has a single engineer, who is also the only approver.
+  # GitHub never lets a PR author approve their own PR, so with EnforceAdmins
+  # the engineer could not merge PRs opened from their own account. Keep it
+  # off: Claude's PRs come from the bot account and still need the engineer's
+  # code-owner approval; admin bypass is only for the engineer's own PRs.
+  [bool]$EnforceAdmins = $false
 )
 
 $ErrorActionPreference = 'Stop'
@@ -43,7 +46,9 @@ $protection = @{
     required_approving_review_count = 1
     require_code_owner_reviews      = $true
     dismiss_stale_reviews           = $true
-    require_last_push_approval      = $true
+    # "Last push approved by someone other than the pusher" needs a second
+    # engineer, which a single-engineer repository does not have.
+    require_last_push_approval      = $false
   }
   restrictions                     = $null
   required_linear_history          = $true

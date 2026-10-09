@@ -36,8 +36,14 @@ powershell -ExecutionPolicy Bypass -File scripts/setup-branch-protection.ps1
 
 The script creates the labels (`critical`, `feature`, `needs-approval`, `approved`, `deps-approved`, `governance`, `bug`) and sets these branch protection rules:
 
-- every change goes through a pull request, with 1 approving review from a code owner (`.github/CODEOWNERS`),
-- approvals are dismissed when new commits are pushed, and the last push must be approved by someone else,
+- every change goes through a pull request, with 1 approving review from the code owner, @BerendCheckpt (`.github/CODEOWNERS`),
+- approvals are dismissed when new commits are pushed,
 - the CI checks `unit`, `e2e`, `frameworks`, `deps` and `pr-policy` must pass,
-- linear history, no force pushes, no deletions, and conversations resolved,
-- the rules also apply to admins (`-EnforceAdmins $false` turns that off. Your own PRs then still need a second engineer to approve them, because you can't approve your own PR.)
+- linear history, no force pushes, no deletions, and conversations resolved.
+
+These rules are sized for **a single engineer**, who is also the only approver:
+
+- "Require approval of the most recent push" is **off**. It needs a second person to approve your own pushes.
+- "Do not allow bypassing the above settings" (`enforce_admins`) is **off**. GitHub never lets a PR author approve their own PR, so as the admin you merge your own PRs with the bypass checkbox. Claude's PRs come from the bot account, so you approve those normally.
+
+Run the script only once. Claude never runs it and never changes branch protection. Change the settings yourself under *Settings → Branches*.

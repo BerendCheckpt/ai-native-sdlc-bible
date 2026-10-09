@@ -27,6 +27,15 @@ Every rule has a deterministic control where possible. Claude Code hooks only bi
 | Divergence from the chosen frameworks | `scripts/check-frameworks.js` (`frameworks` check), `framework-auditor` subagent | CI opens a critical issue tagging @BerendCheckpt |
 | New node modules compared with `main` | `scripts/check-deps.js` (`deps` check), `guard-git.js` asks on `npm install <pkg>` | CI opens a critical issue, comments on the PR, and fails until a human adds `deps-approved` |
 
+## Approval model
+
+This repository has **one engineer**, @BerendCheckpt, who is also the only approver.
+
+- Claude's PRs are opened from the bot account, and @BerendCheckpt approves them as the code owner.
+- GitHub never lets a PR author approve their own PR. PRs opened from @BerendCheckpt's own account are merged with the admin bypass, which is why "applies to admins" (`enforce_admins`) is off.
+- "Approval of the most recent push" is off, because it needs a second person.
+- Claude never changes branch protection. The `guard-gh.js` hook blocks it.
+
 ## Known limitations
 
 - GitHub can't restrict which users may set a label. The `approved` and `deps-approved` labels are protected from Claude by a hook, not from other people with write access.
