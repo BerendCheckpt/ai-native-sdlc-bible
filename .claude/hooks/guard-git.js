@@ -6,14 +6,25 @@
 // - commits that change tests/ need the human engineer's approval
 // - feature branches only for approved issues: feature/<issue>-<slug>
 // - adding node modules needs approval (it is a critical issue)
+// - commits are blocked when .gitignore excludes source files or tests fail
 
+const fs = require('node:fs');
 const path = require('node:path');
+const { spawnSync } = require('node:child_process');
 const lib = require('./lib');
 const policy = require(path.join(__dirname, '..', '..', 'scripts', 'lib', 'policy.js'));
 
 const MAIN = policy.PROTECTED_BRANCH;
 const GIT_GLOBAL_WITH_VALUE = new Set(['-C', '-c', '--git-dir', '--work-tree', '--namespace', '--exec-path']);
 const ALLOWED_NPX = new Set(['playwright']);
+
+function listFiles(dir, root) {
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const full = path.join(dir, entry.name);
+    return entry.isDirectory() ? listFiles(full, root) : [path.relative(root, full).split(path.sep).join('/')];
+  });
+}
 
 function parseGit(words) {
   if (lib.programName(words[0]) !== 'git') return null;
@@ -100,6 +111,14 @@ function checkCommit(args, ctx) {
   if (args.some((a) => a === '--no-verify' || a === '-n')) {
     return lib.deny('Skipping git hooks (--no-verify) is not allowed.');
   }
+  const ignored = ctx.ignoredSourceFiles();
+  if (ignored.length) {
+    return lib.deny(`.gitignore excludes source files, so they would never reach CI:\n  ${ignored.slice(0, 10).join('\n  ')}${ignored.length > 10 ? `\n  …and ${ignored.length - 10} more` : ''}\nAnchor root-only patterns with a leading slash (e.g. "/build/" instead of "build/") and commit again.`);
+  }
+  const testRun = ctx.runTests();
+  if (!testRun.ok) {
+    return lib.deny(`npm test fails, so this commit would break CI. Fix the failures and commit again:\n${testRun.output}`);
+  }
   const all = args.some((a) => a === '--all' || /^-[A-Za-z]*a[A-Za-z]*$/.test(a));
   const files = ctx.stagedFiles({ all });
   const tests = files.filter((file) => policy.classifyPath(file) === 'tests');
@@ -179,6 +198,23 @@ function defaultContext(cwd) {
       const tracked = all ? lib.runCommand('git', ['diff', '--name-only'], cwd).split('\n') : [];
       return [...new Set([...staged, ...tracked].map((s) => s.trim()).filter(Boolean))];
     },
+    // Files on disk in the source directories that .gitignore would exclude.
+    // --no-index also catches files that are already tracked.
+    ignoredSourceFiles() {
+      const files = policy.TRACKED_SOURCE_DIRS.flatMap((dir) => listFiles(path.join(cwd, dir), cwd));
+      if (!files.length) return [];
+      const result = spawnSync('git', ['check-ignore', '--no-index', '--stdin'], { cwd, input: files.join('\n'), encoding: 'utf8', timeout: 15000 });
+      if (result.status === 1) return [];
+      if (result.status !== 0) throw new Error(`git check-ignore failed: ${(result.stderr || '').trim()}`);
+      return result.stdout.split('\n').map((s) => s.trim()).filter(Boolean);
+    },
+    // Runs the same unit, hook and script tests as `npm test`, without npm.
+    runTests() {
+      const result = spawnSync(process.execPath, ['--test', ...policy.TEST_GLOBS], { cwd, encoding: 'utf8', timeout: 120000 });
+      const output = `${result.stdout || ''}${result.stderr || ''}`;
+      const failures = output.split('\n').filter((line) => /^\s*(✖|not ok)|^ℹ (tests|pass|fail) /.test(line));
+      return { ok: result.status === 0, output: (failures.length ? failures : output.split('\n')).slice(-25).join('\n') };
+    },
     issueLabels(number) {
       try {
         const out = lib.runCommand('gh', ['issue', 'view', String(number), '--json', 'labels', '--jq', '.labels[].name'], cwd);
@@ -198,4 +234,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { evaluate, parseGit, newBranchName };
+module.exports = { evaluate, parseGit, newBranchName, defaultContext };

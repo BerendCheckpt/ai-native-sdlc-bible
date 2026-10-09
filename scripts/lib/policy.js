@@ -7,6 +7,10 @@
 const ENGINEER = process.env.SDLC_ENGINEER || 'BerendCheckpt';
 const AUTHOR_NAME = 'Jean Claude van Damme';
 const PROTECTED_BRANCH = 'main';
+// Directories whose files must never be excluded by .gitignore.
+const TRACKED_SOURCE_DIRS = ['content', 'src', 'db', '.github'];
+// The same globs as `npm test` in package.json.
+const TEST_GLOBS = ['tests/unit/**/*.test.js', 'tests/hooks/**/*.test.js', 'tests/scripts/**/*.test.js'];
 const FEATURE_BRANCH_RE = /^feature\/(\d+)-[a-z0-9][a-z0-9-]*$/;
 const APPROVED_LABEL = 'approved';
 const DEPS_APPROVED_LABEL = 'deps-approved';
@@ -43,6 +47,8 @@ module.exports = {
   ENGINEER,
   AUTHOR_NAME,
   PROTECTED_BRANCH,
+  TRACKED_SOURCE_DIRS,
+  TEST_GLOBS,
   FEATURE_BRANCH_RE,
   APPROVED_LABEL,
   DEPS_APPROVED_LABEL,
